@@ -1,0 +1,105 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 13% 9%;
+    --foreground: 220 9% 95%;
+    --card: 220 13% 11%;
+    --card-foreground: 220 9% 95%;
+    --popover: 220 13% 11%;
+    --popover-foreground: 220 9% 95%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 220 9% 95%;
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 220 9% 95%;
+    --muted: 220 13% 15%;
+    --muted-foreground: 220 9% 65%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 220 9% 95%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 220 9% 95%;
+    --border: 220 13% 20%;
+    --input: 220 13% 20%;
+    --ring: 217 91% 60%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 220 13% 9%;
+    --foreground: 220 9% 95%;
+    --card: 220 13% 11%;
+    --card-foreground: 220 9% 95%;
+    --popover: 220 13% 11%;
+    --popover-foreground: 220 9% 95%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 220 9% 95%;
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 220 9% 95%;
+    --muted: 220 13% 15%;
+    --muted-foreground: 220 9% 65%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 220 9% 95%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 220 9% 95%;
+    --border: 220 13% 20%;
+    --input: 220 13% 20%;
+    --ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .starfield {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite;
+  }
+
+  .star:nth-child(odd) {
+    animation-delay: 1s;
+  }
+
+  .star:nth-child(3n) {
+    animation-delay: 2s;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  .glow-text {
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  }
+
+  .glow-border {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  .parallax-bg {
+    background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  }
+}
