@@ -9,27 +9,46 @@ interface SolarSystemProps {
   timeSpeed: number;
   showOrbits: boolean;
   starDensity: number;
+  showLabels: boolean;
 }
 
 function Sun() {
   const meshRef = useRef<THREE.Mesh>(null);
+  const lightRef = useRef<THREE.PointLight>(null);
 
-  useFrame(() => {
+  useFrame((state) => {
     if (meshRef.current) {
       meshRef.current.rotation.y += 0.005;
     }
   });
 
   return (
-    <mesh ref={meshRef} position={[0, 0, 0]}>
-      <sphereGeometry args={[1, 32, 32]} />
-      <meshBasicMaterial 
-        color="#FDB813" 
-        emissive="#FDB813"
-        emissiveIntensity={0.3}
+    <group>
+      <mesh ref={meshRef} position={[0, 0, 0]}>
+        <sphereGeometry args={[1.2, 64, 32]} />
+        <meshBasicMaterial 
+          color="#FDB813" 
+          emissive="#FDB813"
+          emissiveIntensity={0.4}
+        />
+      </mesh>
+      <pointLight 
+        ref={lightRef}
+        position={[0, 0, 0]} 
+        intensity={2} 
+        distance={100}
+        color="#FDB813"
       />
-      <pointLight position={[0, 0, 0]} intensity={2} distance={100} />
-    </mesh>
+      {/* Add corona effect */}
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[1.5, 32, 16]} />
+        <meshBasicMaterial 
+          color="#FFD700"
+          transparent
+          opacity={0.1}
+        />
+      </mesh>
+    </group>
   );
 }
 
@@ -37,7 +56,8 @@ export default function SolarSystem({
   onPlanetSelect, 
   timeSpeed, 
   showOrbits, 
-  starDensity 
+  starDensity,
+  showLabels
 }: SolarSystemProps) {
   const planets = [
     { 
@@ -70,14 +90,14 @@ export default function SolarSystem({
     },
     { 
       name: "Jupiter", 
-      size: 0.7, 
+      size: 0.8, 
       color: "#D8CA9D", 
       orbitRadius: 9, 
       orbitSpeed: 0.2 
     },
     { 
       name: "Saturn", 
-      size: 0.6, 
+      size: 0.7, 
       color: "#FAD5A5", 
       orbitRadius: 12, 
       orbitSpeed: 0.15 
@@ -99,10 +119,19 @@ export default function SolarSystem({
   ];
 
   return (
-    <Canvas camera={{ position: [0, 10, 20], fov: 60 }}>
-      <ambientLight intensity={0.2} />
+    <Canvas 
+      camera={{ position: [0, 15, 25], fov: 60 }}
+      gl={{ antialias: true, alpha: true }}
+    >
+      {/* Enhanced lighting */}
+      <ambientLight intensity={0.1} />
+      <directionalLight 
+        position={[10, 10, 5]} 
+        intensity={0.3}
+        castShadow
+      />
       
-      {/* Enhanced starfield */}
+      {/* Enhanced starfield with configurable density */}
       <Stars 
         radius={300} 
         depth={60} 
@@ -110,7 +139,18 @@ export default function SolarSystem({
         factor={7} 
         saturation={0} 
         fade 
-        speed={0.5}
+        speed={0.3}
+      />
+      
+      {/* Additional background stars for depth */}
+      <Stars 
+        radius={500} 
+        depth={100} 
+        count={starDensity * 500} 
+        factor={4} 
+        saturation={0.1} 
+        fade 
+        speed={0.1}
       />
       
       {/* Sun */}
@@ -129,15 +169,21 @@ export default function SolarSystem({
           timeSpeed={timeSpeed}
           onClick={onPlanetSelect}
           showOrbits={showOrbits}
+          showLabels={showLabels}
         />
       ))}
 
+      {/* Enhanced camera controls */}
       <OrbitControls 
         enablePan={true} 
         enableZoom={true} 
         enableRotate={true}
-        minDistance={5}
-        maxDistance={50}
+        minDistance={8}
+        maxDistance={60}
+        maxPolarAngle={Math.PI / 1.5}
+        minPolarAngle={Math.PI / 6}
+        enableDamping
+        dampingFactor={0.05}
       />
     </Canvas>
   );
