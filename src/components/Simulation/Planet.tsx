@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useEffect } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import * as THREE from "three";
@@ -27,6 +27,7 @@ export default function Planet({
   showOrbits 
 }: PlanetProps) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const materialRef = useRef<THREE.MeshStandardMaterial>(null);
   const orbitRef = useRef<THREE.Line>(null);
   
   // Create procedural texture for now (replace with actual textures later)
@@ -61,6 +62,14 @@ export default function Planet({
     texture.wrapT = THREE.RepeatWrapping;
     return texture;
   }, [color]);
+
+  // Update material with texture
+  useEffect(() => {
+    if (materialRef.current && texture) {
+      materialRef.current.map = texture;
+      materialRef.current.needsUpdate = true;
+    }
+  }, [texture]);
 
   // Create orbit path
   const orbitGeometry = useMemo(() => {
@@ -113,7 +122,7 @@ export default function Planet({
       >
         <sphereGeometry args={[size, 32, 32]} />
         <meshStandardMaterial 
-          map={texture}
+          ref={materialRef}
           roughness={0.8}
           metalness={0.1}
         />
